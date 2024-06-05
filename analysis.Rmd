@@ -1,0 +1,60 @@
+---
+title: "Analysis"
+author: "Dana Hicks"
+date: "2024-06-05"
+output: html_document
+---
+#1) library
+```{r}
+library(ggplot2)
+library(lme4)
+library(lmerTest)
+
+```
+
+#load Data
+```{r}
+SGLT2_Peak_table <- read_excel("SGLT2 Peak table.xlsx")
+
+SGLT2_gradient <- 
+  read_excel(path = "SGLT2_AV gradient_data table.xlsx", 
+             sheet = "AV gradients")
+
+SGLT2_peripheral <- 
+  read_excel("SGLT2_AV gradient_data table.xlsx",
+             sheet = "Peripheral conc")
+
+```
+#example of lmer
+```{r}
+model <-
+lmerTest::lmer(data = SGLT2_gradient, formula = Lip1 ~ Met22*`Sample site` + (1|`Participant ID`))
+
+modelSummary <- summary(model)
+
+```
+
+#make new subject IDs
+```{r}
+SGLT2_gradient$newSubjectID <- 
+```
+#set up loop 
+```{r}
+pvals<- list()
+
+for(i in 1:ncol(df)){
+  formula <- as.formal(paste(colnames(df)[i], " ~ Met22*`Sample site` + (1|`Participant ID`)"))
+  model <- lmer(formula, data = df)
+  modelSummary <- summary(model)
+  pvals[[i]] <- modelSummary$coefficients[1:3,5]
+}
+```
+
+```{r}
+for( i in 1:ncol(df)){
+  for(j in 1:nrow(df)){
+    formula <- as.formal(paste(colnames(df)[i], " ~", rownames(df)[j],"*`Sample site` + (1|`Participant ID`)"))
+  }
+}
+```
+#pvalue adjustment
